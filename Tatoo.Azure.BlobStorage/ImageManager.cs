@@ -30,6 +30,18 @@ namespace Tatoo.Azure.BlobStorage
             return container;
         }
 
+        private static CloudBlobContainer GetContainer(string bucketName)
+        {
+            // Parses the connection string for the WindowS Azure Storage Account
+            var account = CloudStorageAccount.Parse(Configuration.StorageConnectionString);
+            var client = account.CreateCloudBlobClient();
+
+            // Gets a reference to the images container
+            var container = client.GetContainerReference(bucketName);
+
+            return container;
+        }
+
         public async Task SetPublicContainerPermissions(CloudBlobContainer container)
         {
             var permissions = await container.GetPermissionsAsync();
@@ -41,18 +53,25 @@ namespace Tatoo.Azure.BlobStorage
         /// Uploads a new image to a blob container.
         /// </summary>
         /// <param name="image"></param>
+        /// <param name="bucketName"></param>
+        /// <param name="fileName"></param>
         /// <returns></returns>
-        public async Task<string> UploadImage(Stream image)
+        public async Task<string> UploadImage(Stream image, string bucketName, string fileName)
         {
-            var container = GetContainer();
+            var container = GetContainer(bucketName);
             
             
             // Creates the container if it does not exist
             await container.CreateIfNotExistsAsync(BlobContainerPublicAccessType.Container, null, null)
                 .ConfigureAwait(false);
 
+            var uniqueDateString = DateTime.Now.ToString("ddMMyyyyHHmmssfff");
+            var ext = Path.GetExtension(fileName);
+            var file = Path.GetFileNameWithoutExtension(fileName);
+            var name = string.Format("{0}_{1}_{2}", file, uniqueDateString, ext);
+
             // Uses a random name for the new images
-            var name = RandomString(10);
+            //var name = RandomString(10);
 
            /* var randomNumberGenerator = new RNGCryptoServiceProvider();
 
@@ -124,15 +143,14 @@ namespace Tatoo.Azure.BlobStorage
             return null;
         }
 
-        /// <summary>
-        /// Generates a random string
-        /// </summary>
-        private static readonly Random Random = new Random();
+      
+        /*private static readonly Random Random = new Random();
         private static string RandomString(int length)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[Random.Next(s.Length)]).ToArray());
-        }
+        }*/
     }
+    
 }
