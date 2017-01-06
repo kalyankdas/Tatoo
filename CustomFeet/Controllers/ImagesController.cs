@@ -24,39 +24,43 @@ namespace CustomFeet.Controllers
         }
 
 
+        //[HttpPost]
+        //[Route("api/[controller]/images")]
+        //public async Task<IActionResult> Post(string bucketName, IList<IFormFile> files)
+        //{
+        //    var urls = new List<string>();
+        //    var imageManager = new ImageManager();
+        //    foreach (var file in files)
+        //    {
+                
+        //        using (var fileStream = file.OpenReadStream())
+        //        {
+        //            var fileUrl = await imageManager.UploadImage(fileStream, bucketName, file.FileName);
+        //           urls.Add(fileUrl);
+        //        }
+
+
+        //    }
+
+        //    return Ok(new {FileUrl = urls });
+
+        //}
+
         [HttpPost]
-        [Route("api/[controller]/images")]
-        public async Task<IActionResult> Post(string bucketName, IList<IFormFile> files)
+        [Consumes("application/json", "application/json-patch+json", "multipart/form-data")]
+        public async Task<IActionResult> Post(string bucketName)
         {
             var urls = new List<string>();
             var imageManager = new ImageManager();
-            foreach (var file in files)
+            foreach (var file in Request.Form.Files)
             {
-                
                 using (var fileStream = file.OpenReadStream())
                 {
                     var fileUrl = await imageManager.UploadImage(fileStream, bucketName, file.FileName);
-                   urls.Add(fileUrl);
+                    urls.Add(fileUrl);
                 }
-
-
             }
-
-            return Ok(new {FileUrl = urls });
-
-        }
-
-        [HttpPost]
-        [Route("api/[controller]/image")]
-        public async Task<IActionResult> Post(string bucketName, IFormFile file)
-        {
-            var urls = new List<string>();
-            var imageManager = new ImageManager();
-            using (var fileStream = file.OpenReadStream())
-            {
-                var fileUrl = await imageManager.UploadImage(fileStream, bucketName, file.FileName);
-                urls.Add(fileUrl);
-            }
+            
             return Ok(new { FileUrl = urls });
 
         }

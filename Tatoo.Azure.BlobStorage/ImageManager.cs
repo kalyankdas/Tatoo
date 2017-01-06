@@ -68,7 +68,7 @@ namespace Tatoo.Azure.BlobStorage
             var uniqueDateString = DateTime.Now.ToString("ddMMyyyyHHmmssfff");
             var ext = Path.GetExtension(fileName);
             var file = Path.GetFileNameWithoutExtension(fileName);
-            var name = string.Format("{0}_{1}_{2}", file, uniqueDateString, ext);
+            var name = string.Format("{0}_{1}{2}", file, uniqueDateString, ext);
 
             // Uses a random name for the new images
             //var name = RandomString(10);
@@ -85,7 +85,7 @@ namespace Tatoo.Azure.BlobStorage
             var imageBlob = container.GetBlockBlobReference(name);
             await imageBlob.UploadFromStreamAsync(image).ConfigureAwait(false);
 
-            return name;
+            return imageBlob.Uri.ToString();
         }
 
         /// <summary>
