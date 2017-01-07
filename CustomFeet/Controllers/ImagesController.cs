@@ -9,7 +9,13 @@ namespace CustomFeet.Controllers
     [Route("api/[controller]")]
     public class ImagesController : Controller
     {
+        private readonly IImageManager _imageManager;
         // GET api/values
+        public ImagesController(IImageManager imageManager)
+        {
+            _imageManager = imageManager;
+        }
+
         [HttpGet]
         public IEnumerable<string> Get()
         {
@@ -51,12 +57,12 @@ namespace CustomFeet.Controllers
         public async Task<IActionResult> Post(string bucketName)
         {
             var urls = new List<string>();
-            var imageManager = new ImageManager();
+           
             foreach (var file in Request.Form.Files)
             {
                 using (var fileStream = file.OpenReadStream())
                 {
-                    var fileUrl = await imageManager.UploadImage(fileStream, bucketName, file.FileName);
+                    var fileUrl = await _imageManager.UploadImage(fileStream, bucketName, file.FileName);
                     urls.Add(fileUrl);
                 }
             }

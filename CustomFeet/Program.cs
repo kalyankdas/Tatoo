@@ -14,9 +14,13 @@ namespace CustomFeet
         public static void Main(string[] args)
         {
             var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddCommandLine(args)
-                .AddEnvironmentVariables(prefix: "ASPNETCORE_")
+                .AddJsonFile("config.json")
+                .AddEnvironmentVariables()
                 .Build();
+
+ 
 
             var host = new WebHostBuilder()
                 .UseConfiguration(config)
