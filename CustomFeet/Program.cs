@@ -16,7 +16,7 @@ namespace CustomFeet
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddCommandLine(args)
-                .AddJsonFile("config.json")
+               // .AddJsonFile("appSett.json")
                 .AddEnvironmentVariables()
                 .Build();
 
